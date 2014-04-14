@@ -1,0 +1,676 @@
+리눅스
+
+$$$리눅스 무엇이며 어떤일을 하나?
+1. 운영체제(OS) H/W, S/W 관리
+2. 용도에 따라, 클라이언트(멀티 불가능)/서버(멀티태스킹, 멀티유저 가능)  등으로 관리함.
+3. 강력한 서버기능 : DNS서버, Apache 서버, 메일 서버, 파일 서버 등
+4. 시스템사항을 많이 요구하지 않음.(가벼움)
+5. 1991년 리누스 토발즈 minix 개발(학부때) : 핀란드인 (저서 : Just for fun)
+   - 1994년 1.0버전 (약 1만라인)
+   - 1999년 2.2버전
+   - 최근 버전 2.4.18 (2: 메이저 넘버, 4: 마이너 버전(홀수 개발버전, 짝수
+     안정버전)) : 350만 라인 이상
+
+$$$Log in.
+
+   1. su(super user 권한)
+   우분투를 설치하면 처음에는 일반 사용자로만 로그인 할 수 있다. 왜냐하면 root 계정은 잠겨있기 때문이다. 그런데 설치시 생성한 일반 사용자 계정은 sudo ALL 권한을 가지게 되어 root로 su 할 수 있다.
+
+```sudo passwd
+   su -
+   grep ALL /etc/sudoers
+   grep way2joy /etc/group
+
+&&&설치할 때 생성한 snoopy 계정은 기본적으로 sudo 그룹에 등록되어 있기 때문에 sudo passwd 명령어가 가능했던 것이다.
+
+1. 관리자(루트) 계정 : 시스템의 모든 권한을 갖는 계정, 리눅스 설치시 생성됨.
+   일반 계정 : 시스템의 제한된 권한을 갖는 계정. 루트 계정이 만들어야 생성됨.
+
+2. 일반사용자가 관리자급으로 승격(SU)하고, 관리자가 일반유저로 돌아올(logout) 수 있음.
+
+
+$$$logout : 사용자를 빠져나가는 것.
+   (주의) 백그라운드 데몬(MS의 서비스 개념) : 웹, FTP, DNS,
+   1) logout
+   2) ctrl + D
+   3) exit
+
+$$$Virtual console : 모니터가 여러개인 것처럼 멀티태스킹, 멀티 유저)
+   1) alt + f1 ~ f6
+   2) X윈도우 -> 콘솔모드 : alt + ctrl + f1 ~ f6  (단축키로 자유롭게 변경
+가능)
+   3) 콘솔모드 -> X윈도우 : alt + ctrl + backspace
+
+$$$시스템 종료
+   1) shutdown -h now (halt, init0)   : 시스템 종료
+   2) shutdown -r now (reboot, init6) : 재부팅
+   3) shutdown +10 : exit after 10 minutes (if you want to cancel : ctrl + C)
+   4) shutdown -r +10
+   5) ctrl + alt + del : reboot (/etc/inittab 파일에 기록되어 있고, 수정도
+가능)
+
+$$$우선 알아야할 명령어
+
+   1) ls(list-해당 폴더의 내용을 보여달라)
+   2) cd(change directory-디렉토리 이동)
+   3) pwd(현재 디렉토리 위치)
+   4) clear : 화면을 깨끗하게 함.
+   5) cd .. : 상위 디렉토리로 이동
+
+
+
+
+$$$네트워크 셋팅
+
+   1) ifconfig --> ip정보확인
+
+   2) newconfig--> 리눅스 시스템 ip설정 셋팅 (우분투에서는 없는 명령어 기능임)
+      단, 네트워크 데몬(서비스)을 재시작(수동)해야 함.
+
+   3) 랜카드 번호 :  최초로 설치된 랜카드번호는 eth0로 할당됨.
+
+   4)네트워크데몬을 재시작
+
+   5) cd /etc/init.d
+
+   6) 실행파일은 현재디렉토리에서 실행해야 동작이 됨.
+      --> ./network restart
+          ./network start
+          ./network stop
+          ./network status
+   7) 우분투는 ./networking restart 로 해야 됨.
+      --> ./networking status
+      --> ping (ipaddress) : confirm connectivity. (종료는 ctrl + C)
+
+   8) win7 자기 IP 확인
+      --> 제어판 - 네트워크 및 인터넷 - 네트워크 및 공유센터 
+          로컬영역 연결(유선) 또는 무선랜의 경우 무선네크워크 연결에서 확인
+가능
+
+
+   9) ifconfig시 확인가능 정보 --> IP.Subnet Mask. MAC address 확인가능
+
+   10) cat /etc/resolv.conf --> 파일 : 찾을 DNS 확인가능
+
+       --> cat 명령어가 화일 내용을 화면에 출력해줌
+
+   11) vi /etc/resolv.conf
+
+       i --> 수정 --> esc -->  shift + : --> wq (저장하고 나가겠다)
+                                              q!(저장안하고 나가겠다)
+
+   12) cat /etc/resolv.conf
+
+       --> 우분투 vim 설치 : apt-get install vim-gnome
+
+   13) 영문이 깨질때 export LANG=en_US
+
+   14) cat /etc/sysconfig/network-scripts/ifcfg-eth0 --> default정보
+
+       --> 우분투의 경우는 cat /etc/network/interfaces
+                           cat /etc/reslov.conf
+                           /etc/init.d/networking restart
+
+   15) cat ifcfg-eth0
+
+-----------------------------------------------------------------------
+*내가 누구로 로그인했지?
+ whoami
+ who
+ who am i
+*패스워드 변경
+ passwd 
+ 패스워드
+ exit
+-------------------------------------------------------------------------
+
+$$$일반계정 만들기
+   1) useradd babo 
+   2) passwd babo
+   3) 패스워드
+
+   4) root --> 자기방 : /root
+   5) 일반계정 --> 자기방 : /home/계정명
+
+   6) cat /etc/passwd
+--------------------------------------------------------------------------
+$$$Telnet(윈도우의 터미널서버) 가능하게 셋팅
+   1.구성
+
+     -->우분투의 경우
+
+        0. 가상머신을 고정IP주소 처리하는 방법
+           우분투를 설치시에 IP주소가 자동(dhcp)로 설정이 되어서 설치가 되기 때문에 
+           가상 머신을 이용하거나 직접 컴터에 설치하였다고 하더라도 인터넷만 잘 될뿐..
+           Putty 등을 이용한 ssh, telnet등의 접속이 안될 가능성이 높다..
+
+           dhcp 모드라는건 무작위로 사설IP를 잡아서 인터넷을 하기때문에 
+           IP주소가 계속 바뀌기 때문..
+
+           따라서 이러한 인터넷 세팅을 하기 위해선
+
+           일단 가상머신(vmware)을 기준으로 한다면 가상머신에서 NAT로 설정되어 있는 
+           IP주소를 체크하고 우분투에서 루트권한이나
+
+           sudo vi /etc/network/interface 를 실행하여
+
+           iface eth0 inet dhcp 이라고 써있는 부분을 주석처리 
+           ==> # iface eth0 inet dhcp 해주거나 삭제 후
+ 
+           iface eth0 inet static
+           address xxx.xxx.xxx.xxx
+           netmask 255.255.255.0
+           gateway xxx.xxx.xxx.2
+
+           이렇게 설정을 해주면 된다. x는 자신의 가상머신에서 지원해 주는 IP주소
+
+           그후에 sudo service network restart 를 실행하여 설정된 네트워크 세팅을 
+           적용해 준다.
+
+           만약 위의 명령이 적용되지 않는다면
+
+           sudo /etc/init.d/networking restart 를 쳐주면 네트워크가 재 세팅이 된다.
+
+           이렇게 하면 가상머신안의 사설IP지만 고정IP를 가지기 때문에 가상 머신 밖에서의 
+           고정IP를 이용한 Putty등의접속이 가능하게 된다.
+
+           만약 우분투에 ssh 가 설치되어 있지 않아서 접속이 되지 않을수도 있는데..
+
+           netstat -nltp 로 현제 우분투의 네트워크 상태를 확인하고
+
+           포트별로 사용되는 네트워크가 있는데
+
+           ftp 	        : 21 port
+           ssh 	        : 22
+           telnet       : 23 
+           http	        : 80 
+           oracle	: 1521
+           was	        : 8080
+           isqlplus     : 5560
+
+           주요 사용 포트는 이렇게 되고 
+           $ netstat -ntlp 
+           putty 기준으로 보통 ssh 포트가 뜨지 않는다면 
+
+           sudo apt-get install ssh 이용하여 우분투에 외부 접속을 위한 프로그램을 
+           설치하여 주면 가상머신의 우분투가 서버로서의 역할을 해줄수 있게된다.
+
+           네트워크 설정과 포트가 다 세팅이 되면
+           윈도우에서도 손쉽게 putty를 이용하여 접속환경을 구현할 수 있다.
+
+
+
+
+        1. ssh (secure shell)
+             - 설치
+               $ sudo apt-get install openssh-server : sudo는 root 접속시 생략가능
+
+             - 서비스를 재시작한다.
+               $ su우do service ssh restart
+
+             - 서비스 허용
+               $ sudo vim /etc/hosts.allow
+                 --> sshd : 192.168.10.61
+
+             - 실행 확인
+               $ ps ax | grep ssh
+                 750 ?     Ss   0:00   /usr/sbin/sshd
+                  .
+                  .
+
+               $ sudo netstat -ntlp | grep ssh
+                 tcp    ......
+                 tcp6   ......
+
+        2. telnet
+
+             - 설치
+               $ sudo apt-get install xinetd
+               $ sudo apt-get install telnetd
+
+             - 서비스 등록
+               $ sudo gedit /etc/xinetd.conf
+                 service telnet
+                 {
+                   disable = no
+                   flags = REUSE
+                   socket_type = stream
+                   wait = no
+                   user = root
+                   server = /usr/sbin/in.telnetd
+                   log_on_failure += USERID
+                 }
+
+            - 서비스 허용
+               $ sudo gedit /etc/hosts.allow
+                      in.telnetd : 192.168.10.61
+                      또는  ALL : 192.168.10.61
+
+            - telnet 재시작
+               $ sudo service xinetd restart
+
+            - 실행확인
+               $ sudo netstat -ntlp | grep 23
+                      tcp     0   .............
+
+ 
+
+
+   2.데몬재시작 : 우분투의 경우 service _____ restart로 가능하게 됨.
+
+   3. cd /etc/xinetd.d <-- 자주요청이 되지 않는 데몬들만 모여있다(수퍼데몬)
+
+   4. ls
+
+   5. vi telnet -->disable = yes를 no로 변경후 저장하고 나감
+
+   6. telnet localhost
+
+   7. 일반계정으로 로그인 : 텔넷 기본세팅이 원래 이렇게 되어있기 때문임.
+
+   8. su - (root로 승격)
+-------------------------------------------------------------------------
+기본명령어
+*리눅스/유닉스 확장자에 대한 개념이 없다
+윈도우:~.txt,~.hwp,~.dll.....-->편하다
+
+ls(list-해당폴더의 어떤 것들이 있나를 나열)
+ls
+ls -a(숨긴파일(.파일명)표시)
+ls -l(자세하게 표시)
+ls -al(숨긴파일까지 자세하게 표시)
+ls -s(정렬하여 표시)
+ls -als(숨긴파일까지 자세하게 정렬하여 표시)
+
+절대경로		VS		상대경로
+최상위(/)부터 				지금현재 디렉토리 기준
+
+ls -al / -->절대경로
+ls -al /etc -->절대경로
+ls -al ../etc -->상대경로
+
+*파일만들기
+touch aaa.txt
+touch bbb.txt
+
+ls *.txt
+ls *a*
+ls /etc/pass* -als
+ls -als /etc/pass*
+ls -als ../etc/pass*
+------------------------------------------------------------------------
+로그인 하고 처음 만나는게 쉘(리눅스-bash,유닉스-sh)
+좋은기능 3가지
+1.tab키 기능 -->개체명을 다 안써도 된다.
+2.alias 기능 -->명령어를 만들어 쓸수있다.
+3.history기능 -->내가쳤던 명령어들을 조사가능
+
+ls -als --> l
+alias l='ls -als'
+
+*쉘의 기능
+키보드로 명령어를 받고 그 해당 명령어를 찾아(?)서 명령어를 
+실행하되(옵션,인자값) 실행한 뒤에 기본적으로 모니터로 출력.
+
+1.명령어를 어떨게 찾나?
+echo $PATH = (Response.Write(PATH))
+
+cat 1.txt = cat < 1.txt
+cat > 2.txt (파일만드는 방법중하나)
+
+pwd(print woring directory)
+echo $PWD 
+
+*경로 보여주기 셋팅
+vi /etc/bashrc 에서 46번째 라인에 $PWD추가한후 저장하고 나간다.
+로그인을 다시하면 적용된다
+
+-------------------------------------------------------------------------
+리눅스 상에서 간단한 FTP 클라이언트 사용법
+
+FTPserver : window server
+Linux : cliente
+
+*명령어
+ftp IP,FQDN
+너 누구냐?(만약 익명연결 허용이라면
+		계정명 : anonymous
+		패스워드: email
+
+모드 2가지
+1.binary 모드(2진화모드) - 안정적
+2.ascii모드(아스키모드) - 실행파일,압축파일은 불안정
+
+다운받을때 자꾸 물어본다
+prompt
+
+서버에 있는 자원을 볼때
+ls --> 서버에 있는 자원    
+!ls -->클라이언트 현재 디렉토리에 있는자원
+
+다운받을때 
+get 파일명
+mget aa*  -> aa로 시작하는 파일을 다받아라
+
+업로드할때
+put 파일명
+mput aa* -->aa로 시작하는것은 다올려라
+
+삭제할때
+delete 파일명
+mdelete aa* --> aa로시작하는 파일은 다 지워라
+
+FTP상에서 도움말
+? --> 모든명령어를 볼수 있다
+
+빠져나갈때
+bye
+-------------------------------------------------------------------------
+디렉토리 이동
+cd(절대경로 VS 상대경로)
+
+cd 엔터 --> 자신의 홈디렉토리로 가라
+cd ~ -->자신의 홈디렉토리로 가라
+cd . -->아무의미 없다
+cd .. -->상위 디렉토리로 가라
+cd / -->최상위 디렉토리도 가라
+--------------------------------------------------------------------------
+디렉토리 만들기
+mkdir(make directory),rmdir(디렉토리 삭제)
+
+mkdir aaadir -->현재 디렉토리에 만들어짐
+mkdir bbbdir ccdir -->둘다 만들어짐
+mkdir /root/eeedir -->경로지정한 곳에 만들어짐
+mkdir /root/adir bdir cdir -->경로 지정한곳에 멀티로 만든다
+
+rmdir bbbdir cccdir
+주의)비어있지 않으면 못지운다.
+---------------------------------------------------------------------------
+옵션중 반드시 알아야 할 3가지..
+-i (상호대화 옵션)
+-f (강제 옵션)
+-r (내 하위모든것 지정옵션)
+
+파일만드는것?
+touch aaa.txt
+cat > bbb.txt
+vi aaa.txt
+
+파일지우기
+rm 파일명
+
+*rm -rf 디렉토리명(디렉토리안에 모든것까지 묻지않고 다지운다)
+cp(copy)복사
+
+cp(어디에/어떤거를)(어디에/어떤거로)
+cp aaa.txt bbb.txt
+cp aaa.txt bbb.txt aaadir
+
+cp(copy)복사
+
+cp(어디에/어떤거를) (어디에 /어떤거로)
+cp aaa.txt bbb.txt
+cp aaa.txt bbb.txt aaadir
+
+cp -r /boot/ ~/aaadir
+cp -r /boot/* ~/bbbdir
+
+cp aaa.txt bbb.txt 만약에 bbb.txt가 없다면
+			  bbb.txt가 있다면
+----------------------------------------------------------------------------------
+mv(move) -- 파일이나 디렉토리 이동,이름바꾸기
+
+mv (어떤걸) (어디에)
+mv aaa.txt bbb.txt (aaa.txt 파일을 bbb.txt로 이름변경)
+mv aaa.txt bbb.txt aaadir
+
+mv aaa.txt bbb.txt(기존에 bbb.txt가 있다면 mv -i)
+mv aaadir bbbdir(디렉토리 이동)
+
+mv aaa.txt ~/test/bbb.txt 이동과 동시에 이름바꾸기.
+
+/root에
+aaa.txt 내용
+------------------
+hi~~~~~
+------------------
+/root/test 폴더 만들고 aaa.txt복사
+/root/test 하위에 bbb.txt ccc.txt 만들기
+
+/root/test 폴더를 /root/test2로 복사
+
+/root/test2  폴더를 /로 복사
+
+/test2 지우기
+
+/root/test 폴더를 /test로 이동
+/test 지우기
+------------------------------------------------------------------------------------
+Vi 에디터
+*유닉스 계열의 대표적인 필수 에디터
+*서버구성 자체가 에디팅 방식
+
+실행모드
+w : 저장하기
+wq : 저장하고 빠져나가기
+q! : 그냥 빠져나가기
+q : 수정안한 상태에서 빠져나가기
+
+
+
+실 행 모 드   ==  저장,빠져나가기,해당라인으로
+   	 ↑	  번호달기(set number
+	    shift + :	   set nonumber),검색어(/검색어)
+  ↓     ↑ 
+  ↓엔터 ↑
+  ↓     ↑
+  ↓
+명 령 모 드    ==  카피(yy,3yy),붙여넣기(p,3p)       ([.])
+         ↑	   잘라내기(dd,3dd),실행취소(u)
+  ↓     ↑         yy,3yy->p,3p dd->p
+  ↓i,o,a↑esc
+  ↓     ↑
+  ↓
+입 력 모 드    ==  내용수정
+
+yy,3yy(라인단위 복사)    -->   p,2p(라인단위 붙여넣기)
+dd,3dd(라인단위 잘라내기)-->
+실행취소:u
+
+검색
+shift + : 
+:/pop3 -->  다음검색어(n),이전검색어(N)
+-------------------------------------------------------------------------------
+*사용자 및 환경설정 파일
+
+/root
+/home/계정명
+
+who,whoami,who am i,w(가장많은정보를 보여줌)
+
+
+사용자를 만들면 /etc/passwd파일에 등록됨.
+root계정은 uid --> 0(1~499번까지는 다른 시스템들이 쓰는 계정넘버)
+일반계정은 uid --> 500번이상을 부여한다.
+
+
+*grep 해당열만 자르겠다
+grep babo /etc/passwd --> /etc/passwd파일에 babo가 들어간 문자열만
+                          뽑아주겠다.
+
+
+rpm -qa|grep 프로그램명
+ps -ef|grep 데몬명
+
+. .bashrc --> 로그아웃하지 말고 그냥 파일 내용 적용해서 해당 사용자의 환경설정
+              을 메모리상에  변경해라.
+-----------------------------------------------------------------------------------
+사용자 환경설정 파일
+.bash_logout
+.bashrc
+.bash_profile
+
+3개는 사용자를 만들때 자동으로 만들어 짐 /etc/skel 안에 3개 파일이 있는데 
+ 이것을 복사해서 /home/사용자명/ 안에 카피되어진다.
+*공통환경 설정파일
+/etc/profile
+/etc/bashrc
+
+*환경설정 파일 인식순서
+
+/etc/profile --> ~/.bash_profile --> ~/.bashrc
+--------------------------------------------------------------------------
+압축과 묶음.
+
+프로그램 설치 --> 소스공개 --> 소스컴파일
+문제점)공개 해야하는데 파일과 디렉토리가 많다 
+
+~~.tar.gz(소스)   > rpm
+
+*압축(gzip,bzip2,compress)
+gzip(~~.gz)		==*gzip -1v 부터 -9까지 압축률을 조정할수있음
+gunzip
+
+
+bzip2(~~.bz2)
+bunzip2
+
+
+compress(~~.Z)
+uncompress
+
+*묶음(tar)
+
+tar cvf my.tar . (현재 디렉토리를 묶음)
+tar xvf my.tar   (묶음을 풀때)
+tar xvfC my.tar test(C옵션은 디렉토리 지정해서 풀수있다.)
+
+
+c(묶음)
+x(풀다)
+v(본다)
+f(파일-필수)
+
+*묶는것과 압축을 동시에
+
+tar cvfz my.tar.gz
+
+*풀때
+tar xvfz my.tar.gz
+tar xvfzC mt.tar.gz test
+
+3개 파일을
+/test란 티렉토리를 만들고 여기에 3개의 파일을 이동
+/apm하위에다 묶음을 풀기.
+
+mkdir /test
+mv -f apa* /test
+mv -f php* /test
+mv -f my* /test
+
+cd/test
+tar xvfzC apa탭키 /apm
+tar xvfzC php탭키 /apm
+tar xvfzC mys탭키 /apm
+
+*압축된 내용을 풀지않고 미리보여주기
+
+tar tvfz my.tar.gz
+
+du(disk use의약자) -sh --> 디렉토리용량
+----------------------------------------------------------------------
+*파일시스템과 링크
+유닉스 계열에서는 inode라는 독특한 파일시스템 구조를 가짐
+ls -ial 
+
+inode값-------------------파일명
+ 
+각 파티션마다 inode란 특별한 파일의 저장정보를 갖는 저장장소(메타데이타)를 가짐
+해당 inode번호 --> 해당파일의 주인,그룹,permission,파일타입,하드링크갯수,파일사이즈
+		   수정시간,파일의 첫번째 블락하드디스크 포인터
+디렉토리(파일)
+해당 inode ----------------- 파일명
+
+*즉 해당 inode 번호만 알면 해당파일에 접근할 수 있다?
+ 해당파일에 접근하려면 해당 inode에 반드시 접근해야한다?
+-------------------------------------------------------------------------------------
+링크(하드링크,소프트링크)
+[1]하드링크
+*그렇다면 같은 inode번호를 서로다른 파일로 지칭할 수 있겠느냐? --> 가능하다.
+
+1.실제 내용을 가지고 있는 영역은 한개.
+2.원파일이 사라지면 하드링크도 사라짐.
+3.inode에 하드링크 카운트가 1이여야 삭제가 가능하다.
+4.하드링크의 단점 --> 파티션 경계를 넘어갈수 없다.
+
+[2]소프트링크(파일속성 앞에 l로 표시된다)
+ls -s aaa.txt saaa.txt 
+
+1.타겟파일 자체에 대한 위치의 포인터값(해당파일의 물리적경로)
+2.파티션 경계를 넘을수 있다.
+3.원본파일 없어지면 소프트링크는 인식을 못한다.(리눅스가 인식)
+
+활용예)/root/manage
+안에..자주사용하는 파일
+자주드나드는 디렉토리
+
+ln -s /etc/init.d init
+cd init
+-------------------------------------------------------------------------------------
+사용자 용량제한(디스크 쿼터걸기)
+1.하드디스크를 하나 추가
+2.파티션
+3.포멧
+4.마운트(mount ~~~)
+5./etc/fstab파일설정(자동마운팅) /mydisk(vi /etc/fstab 에서/dev/hda1        /mydisk추가)
+
+디스크 쿼터
+/etc/fstab -->등록된건 자동마운팅
+옵션
+1.rw,ro
+2.nouser(일반사용자는 마운팅 불가능.root만마운팅가능),user(일반사용자도 마운팅가능)
+3.auto(부팅할때 자동마운팅),noauto(자동부팅X)
+
+default값 -- rw,nouser,auto
+*백업
+0
+1
+*파일시스템 체크
+0
+1
+2
+-----------------------------------------------------------------------------
+*디스크 쿼서 설정 순서
+1./etc/fstab에 쿼터를 가져갈 파티션에 usrquota 옵션을 적어주기
+2.reboot --> mount,dh -h
+3.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
